@@ -1,13 +1,13 @@
 const translations = {
     en: {
       "game_end": "Game has ended, restart",
-      "position_is_wall": "The clicked position is a wall, click is not allowed",
-      "position_is_cat": "The clicked position is the cat's current position, click is not allowed",
+      "position_is_wall": "The clicked position is a wall,\n click is not allowed",
+      "position_is_cat": "The clicked position is the cat's\n current position, click is not allowed",
       "cat_no_escape": "The cat has no way to escape, you win",
       "cat_surrender": "The cat surrendered, you win!",
       "code_error": "Code error, current position does not exist",
-      "click_to_surround": "Click on the little circle to surround the cat",
-      "cat_edge": "The cat has reached the edge of the map, you lose",
+      "click_to_surround": "Click on the circle to surround the cat",
+      "cat_edge": "The cat has reached the edge of the map,\n you lose",
       "player_clicked": "You clicked ",
       "reset" : "Restart"
     },
