@@ -39,8 +39,10 @@ const translations = {
   
   function getUserLanguage() {
     // 獲取目前網頁語言
-    const lang = navigator.language || navigator.userLanguage;
-    return lang.includes("zh-TW") ? "zh_tw" : lang.includes("zh-CN") ? "zh_cn" : "en";
+    const lang = (document.documentElement.lang || 'en').toLowerCase();
+    return lang.startsWith('zh-tw') ? 'zh_tw' :
+           lang.startsWith('zh-cn') ? 'zh_cn' :
+           'en'; // 預設
   };
   
   const currentLanguage = getUserLanguage();
