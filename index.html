@@ -76,6 +76,13 @@
                   'en': "Skip Now",
                   'ja': "すぐに移動"
                 };
+
+                // 各語言對應頁面標題
+                const titles = {
+                    'zh-tw': "頁面跳轉",
+                    'en': "Page Redirect",
+                    'ja': "ページリダイレクト"
+                };
             
                 // 獲取使用者語言
                 const lang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
@@ -86,10 +93,12 @@
                 }
                 const message = messages[lang] || messages['en'];
                 const buttonLabel = buttonTexts[lang] || buttonTexts['en'];
+                const pageTitle = titles[lang] || titles['en'];
     
                 // 顯示訊息
                 document.getElementById("message").innerHTML = message;
                 document.getElementById("skipBtn").textContent = buttonLabel;
+                document.title = pageTitle;
                 
                 const countdownElement = document.getElementById("countdown");
                 const progressBar = document.getElementById("progressBar");
