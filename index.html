@@ -98,7 +98,7 @@
                 const timer = setInterval(function () {
                     countdown--;
                     countdownElement.textContent = countdown;
-                    progressBar.style.width = ((1 - countdown / total) * 100) + "%";
+                    progressBar.style.width = ((1 - (countdown - 1) / total) * 100) + "%";
                     
                     if (countdown <= 0) {
                         clearInterval(timer);
