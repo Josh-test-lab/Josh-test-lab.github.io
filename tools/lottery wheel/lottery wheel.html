@@ -170,7 +170,7 @@
       }
     };
 
-    let lang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+    let lang = (document.documentElement.lang || 'en').toLowerCase();
     if (lang === "zh-hant-tw" || lang === "zh-hk" || lang === "zh-hant") lang = "zh-tw";
     const message = messages[lang] || messages['en'];
     const getMessage = key => typeof message[key] === 'function' ? message[key]() : message[key] || key;
