@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      gap: 20px;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .history-container, .lottery-container, .settings-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+    }
+
+    .lottery-box {
+      width: 100%;
+      max-width: 350px;
+      height: 200px;
+      overflow: hidden;
+      border: 2px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: bold;
+      background-color: #f8f8f8;
+    }
+
+    textarea {
+      width: 100%;
+      max-width: 500px;
+      height: 300px;
+      resize: none;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background: #eee;
+      margin: 4px 0;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    #clickHint {
+      font-size: 12px;
+      color: #555;
+    }
+
+    @media (max-width: 800px) {
+      .container {
+        flex-direction: column;
+      }
+    }
+
+    #prev-settings-title, #clickHint, #lottery-price, #draw-history-title, #clearSettingHistoryBtn, #lottery-title {
+      margin-bottom: -3px; /* 減少間距 */
+    }
+
+    .buttons-container {
+      display: flex;
+      gap: 10px; /* 兩個按鈕之間的間距 */
+      justify-content: center; /* 可選，讓按鈕居中 */
+    }
+  </style>
+</head>
+
+<body>
+  <h1 id="lottery-title"></h1>
+  <div class="container">
+    <!-- 抽籤紀錄區塊 -->
+    <div class="history-container">
+      <h2 id="draw-history-title"></h2>
+      <button id="clearDrawHistoryBtn"></button>
+      <ul id="drawHistory"></ul>
+    </div>
+
+    <!-- 抽獎輪盤區塊 -->
+    <div class="lottery-container">
+      <div class="lottery-box" id="displayPrize"></div>
+      <button id="toggleBtn" disabled></button>
+    </div>
+
+    <!-- 設定獎品區塊 -->
+    <div class="settings-container">
+      <h2 id="lottery-price"></h2>
+      <textarea id="prizeInput" placeholder=""></textarea>
+      <div class="buttons-container">
+        <button id="setPrizesBtn"></button>
+        <button id="clearPrizesBtn"></button>
+      </div>
+
+      <h2 id="prev-settings-title"></h2>
+      <div id="clickHint"></div>
+      <button id="clearSettingHistoryBtn"></button>
+      <ul id="prev-settings-list"></ul>
+    </div>
+  </div>
+
+  <script>
+    const wheelTime = 10; // 轉盤轉動時間(秒)
+
+    const messages = {
+      "zh-tw": {
+        title: "抽籤輪盤",
+        setting: "設定",
+        placeholder: "請輸入欲抽選的選項，每行一個",
+        setPrizeBtn: "確定編輯",
+        start: "開始抽籤",
+        stop: "停止抽籤",
+        ready: "按鈕開始抽籤...",
+        alertEmpty: "請輸入至少一個選項！",
+        prevSettings: "設定記錄",
+        drawHistory: "抽籤記錄",
+        clearSetting: "清空設定",
+        clearDrawHistory: "清空抽籤記錄",
+        clearSettingHistory: "清空設定記錄",
+        clickHint: "(點選以載入)"
+      },
+      "en": {
+        title: "Lottery Wheel",
+        setting: "Settings",
+        placeholder: "Enter options, one per line",
+        setPrizeBtn: "Set Prize List",
+        start: "Start Lottery",
+        stop: "Stop Lottery",
+        ready: "Ready to draw...",
+        alertEmpty: "Please enter at least one option!",
+        prevSettings: "Settings History",
+        drawHistory: "Draw History",
+        clearSetting: "Clear",
+        clearDrawHistory: "Clear Draw History",
+        clearSettingHistory: "Clear Setting History",
+        clickHint: "(Click to load)"
+      }
+    };
+
+    let lang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+    if (lang === "zh-hant-tw" || lang === "zh-hk" || lang === "zh-hant") lang = "zh-tw";
+    const message = messages[lang] || messages['en'];
+    const getMessage = key => typeof message[key] === 'function' ? message[key]() : message[key] || key;
+
+    const prizeInput = document.getElementById('prizeInput');
+    const setPrizesBtn = document.getElementById('setPrizesBtn');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const displayPrize = document.getElementById('displayPrize');
+    const prevList = document.getElementById('prev-settings-list');
+    const drawHistory = document.getElementById('drawHistory');
+    const clearDrawHistoryBtn = document.getElementById('clearDrawHistoryBtn');
+    const clearSettingHistoryBtn = document.getElementById('clearSettingHistoryBtn');
+    const clearPrizesBtn = document.getElementById('clearPrizesBtn');
+
+    document.getElementById('lottery-title').textContent = getMessage('title');
+    document.getElementById('lottery-price').textContent = getMessage('setting');
+    document.getElementById('prev-settings-title').textContent = getMessage('prevSettings');
+    document.getElementById('draw-history-title').textContent = getMessage('drawHistory');
+    document.title = getMessage('title');
+    document.getElementById('clearDrawHistoryBtn').textContent = getMessage('clearDrawHistory');
+    document.getElementById('clearSettingHistoryBtn').textContent = getMessage('clearSettingHistory');
+    document.getElementById('clickHint').textContent = getMessage('clickHint');
+    prizeInput.placeholder = getMessage('placeholder');
+    setPrizesBtn.textContent = getMessage('setPrizeBtn');
+    clearPrizesBtn.textContent = getMessage('clearSetting');
+    toggleBtn.textContent = getMessage('start');
+    displayPrize.textContent = getMessage('ready');
+
+    let prizes = [];
+    let interval = null;
+    let spinTimeout = null;
+    let prevSettings = [];
+    let drawing = false;
+
+    setPrizesBtn.addEventListener('click', () => {
+      prizes = prizeInput.value.split('\n').map(item => item.trim()).filter(Boolean);
+      if (prizes.length === 0) {
+        alert(getMessage("alertEmpty"));
+        return;
+      }
+      displayPrize.textContent = getMessage('ready');
+      toggleBtn.disabled = false;
+      prevSettings.unshift([...prizes]);
+      renderPrevSettings();
+      clearPrizesBtn.disabled = false; // 啟用清空按鈕
+    });
+
+    clearPrizesBtn.addEventListener('click', () => {
+      if (drawing) return; // 如果正在抽籤，則無法清空
+      prizeInput.value = ''; // 清空設定框內的選項
+      prizes = []; // 清空選項
+      displayPrize.textContent = getMessage('ready'); // 顯示 "準備好"
+      toggleBtn.disabled = true; // 禁用開始抽籤按鈕
+    });
+
+    function renderPrevSettings() {
+      prevList.innerHTML = '';
+      prevSettings.forEach(set => {
+        const li = document.createElement('li');
+        li.textContent = set.join(', ');
+        li.addEventListener('click', () => {
+          if (drawing) return;
+          prizes = [...set];
+          prizeInput.value = prizes.join('\n');
+          displayPrize.textContent = getMessage('ready');
+          toggleBtn.disabled = false;
+        });
+        prevList.appendChild(li);
+      });
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      if (!drawing) {
+        if (prizes.length === 0) return;
+        drawing = true;
+        toggleBtn.textContent = getMessage('stop');
+        setPrizesBtn.disabled = true;
+        prizeInput.disabled = true;
+        clearPrizesBtn.disabled = true;
+        prevList.style.pointerEvents = 'none';
+
+        let duration = wheelTime * 1000; // 總轉動時間（毫秒）
+        let elapsed = 0;
+        let speed = 50; // 初始間隔時間
+        let slowdownThreshold = 3000; // 最後幾秒開始變慢
+        let slowdownStep = 30; // 每次變慢的程度
+
+        function spin() {
+          if (!drawing) return;
+
+          let randomIndex = Math.floor(Math.random() * prizes.length);
+          displayPrize.textContent = prizes[randomIndex];
+
+          elapsed += speed;
+
+          // 開始變慢（距離結束小於 slowdownThreshold）
+          if (duration - elapsed <= slowdownThreshold) {
+            speed += slowdownStep; // 漸漸變慢
+          }
+
+          if (elapsed < duration) {
+            interval = setTimeout(spin, speed);
+          } else {
+            stopDraw();
+          }
+        }
+
+        spin(); // 啟動轉盤
+      } else {
+        stopDraw();
+      }
+    });
+
+    function stopDraw() {
+      clearTimeout(interval);
+      clearTimeout(spinTimeout);
+      toggleBtn.textContent = getMessage('start');
+      setPrizesBtn.disabled = false;
+      prizeInput.disabled = false;
+      clearPrizesBtn.disabled = false;
+      prevList.style.pointerEvents = 'auto';
+      drawing = false;
+      drawHistory.insertAdjacentHTML('afterbegin', `<li>${displayPrize.textContent}</li>`);
+    }
+
+    clearDrawHistoryBtn.addEventListener('click', () => {
+      drawHistory.innerHTML = '';
+    });
+
+    clearSettingHistoryBtn.addEventListener('click', () => {
+      prevSettings = [];
+      renderPrevSettings(); // 重新渲染 UI
+    });
+
+  </script>
+</body>
+</html>
