@@ -23,34 +23,50 @@
         // 根據瀏覽器語言自動選擇顯示的內容
         document.addEventListener("DOMContentLoaded", function () {
             let countdown = 0; // 倒數秒數
-        
-            // 各語言對應訊息模板
-            const messages = {
-                'zh-tw': `你將在 <span id='countdown'>${countdown}</span> 秒鐘後跳轉到新頁面...`,
-                'en': `You will be redirected in <span id='countdown'>${countdown}</span> seconds...`,
-                'ja': `<span id='countdown'>${countdown}</span> 秒後に新しいページにリダイレクトされます...`
-            };
-        
-            // 獲取使用者語言
-            const lang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
-        
-            // 選擇合適的訊息
-            const message = messages[lang] || messages['en'];
+            const url = "https://yao-chih.netlify.app"; // 跳轉網址
+            
+            // 跳轉函數
+            function redirectNow() {
+                window.location.href = url; // 跳轉頁面
+            }
 
-            // 顯示訊息
-            document.getElementById("message").innerHTML = message;
-
-            const countdownElement = document.getElementById("countdown");
-
-            // 設置倒數計時
-            const timer = setInterval(function () {
-                countdown--;
-                countdownElement.textContent = countdown;
-                if (countdown <= 0) {
+            if (countdown == 0){
+                redirectNow();
+            } else {
+                // 各語言對應訊息模板
+                const messages = {
+                    'zh-tw': `你將在 <span id='countdown'>${countdown}</span> 秒鐘後跳轉到新頁面...`,
+                    'en': `You will be redirected in <span id='countdown'>${countdown}</span> seconds...`,
+                    'ja': `<span id='countdown'>${countdown}</span> 秒後に新しいページにリダイレクトされます...`
+                };
+            
+                // 獲取使用者語言
+                const lang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+            
+                // 選擇合適的訊息
+                const message = messages[lang] || messages['en'];
+    
+                // 顯示訊息
+                document.getElementById("message").innerHTML = message;
+    
+                const countdownElement = document.getElementById("countdown");
+    
+                // 設置倒數計時
+                const timer = setInterval(function () {
+                    countdown--;
+                    countdownElement.textContent = countdown;
+                    if (countdown <= 0) {
+                        clearInterval(timer);
+                        redirectNow();
+                    }
+                }, 1000); // 每秒更新一次
+        
+                // 立即跳轉按鈕
+                document.getElementById("skipBtn").addEventListener("click", function () {
                     clearInterval(timer);
-                    window.location.href = "https://yao-chih.netlify.app"; // 跳轉頁面
-                }
-            }, 1000); // 每秒更新一次
+                    redirectNow();
+                });
+            }            
         });
     </script>
 </head>
