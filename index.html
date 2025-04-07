@@ -3,9 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>頁面跳轉</title>
-    <div id="message"></div>
-    <button id="skipBtn" style="margin-top: 10px;">立即跳轉</button>
+    
+    <div id="progressBarContainer">
+      <div id="progressBar"></div>
+    </div>
+    
+    <div id="message" style="margin-top: 10px;></div>
+        
+    <button id="skipBtn" style="margin-top: 10px;"></button>
+    
     <style>
         /* 讓文字置中 */
         body {
@@ -19,6 +27,37 @@
         }
         p {
             font-size: 20px;
+        }
+
+        #skipBtn {
+          padding: 8px 16px;
+          font-size: 1rem;
+          background-color: #0078d4;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+         }
+    
+        #skipBtn:hover {
+          background-color: #005fa3;
+        }
+    
+        #progressBarContainer {
+          margin-top: 15px;
+          width: 100%;
+          max-width: 400px;
+          height: 10px;
+          background-color: #e0e0e0;
+          border-radius: 5px;
+          overflow: hidden;
+        }
+    
+        #progressBar {
+          height: 100%;
+          background-color: #4caf50;
+          width: 100%;
+          transition: width 1s linear;
         }
     </style>
     <script>
@@ -41,22 +80,34 @@
                     'en': `You will be redirected in <span id='countdown'>${countdown}</span> seconds...`,
                     'ja': `<span id='countdown'>${countdown}</span> 秒後に新しいページにリダイレクトされます...`
                 };
+
+                // 各語言對應按鈕
+                const buttonTexts = {
+                  'zh-tw': "立即跳轉",
+                  'en': "Skip Now",
+                  'ja': "すぐに移動"
+                };
             
                 // 獲取使用者語言
                 const lang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
             
                 // 選擇合適的訊息
                 const message = messages[lang] || messages['en'];
+                const buttonLabel = buttonTexts[lang] || buttonTexts['en'];
     
                 // 顯示訊息
                 document.getElementById("message").innerHTML = message;
-    
+                document.getElementById("skipBtn").textContent = buttonLabel;
+                
                 const countdownElement = document.getElementById("countdown");
+                const progressBar = document.getElementById("progressBar");
     
                 // 設置倒數計時
                 const timer = setInterval(function () {
                     countdown--;
                     countdownElement.textContent = countdown;
+                    progressBar.style.width = (countdown / total * 100) + "%";
+                    
                     if (countdown <= 0) {
                         clearInterval(timer);
                         redirectNow();
