@@ -25,13 +25,13 @@
             var count = 3; // 設定倒數秒數
             
             const lang = navigator.language || navigator.userLanguage; // 獲取使用者的語言設置
-            let message = "你將在 <span id='countdown'>$count</span> 秒鐘後跳轉到新頁面...";
+            let message = "你將在 <span id='countdown'>${count}</span> 秒鐘後跳轉到新頁面...";
 
             // 檢查語言並設定不同的訊息
             if (lang.startsWith("en")) {
-                message = "You will be redirected in <span id='countdown'>$count</span> seconds...";
+                message = "You will be redirected in <span id='countdown'>${count}</span> seconds...";
             } else if (lang.startsWith("ja")) {
-                message = " <span id='countdown'>$count</span> 秒後に新しいページにリダイレクトされます...";
+                message = " <span id='countdown'>${count}</span> 秒後に新しいページにリダイレクトされます...";
             }
 
             // 顯示訊息
