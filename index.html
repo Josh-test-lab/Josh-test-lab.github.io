@@ -22,7 +22,7 @@
     <script>
         // 根據瀏覽器語言自動選擇顯示的內容
         document.addEventListener("DOMContentLoaded", function () {
-            const countdown = 3; // 倒數秒數
+            let countdown = 3; // 倒數秒數
         
             // 各語言對應訊息模板
             const messages = {
@@ -32,7 +32,7 @@
             };
         
             // 獲取使用者語言
-            const lang = (navigator.language || navigator.userLanguage || 'en');
+            const lang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
         
             // 選擇合適的訊息
             const message = messages[lang] || messages['en'];
