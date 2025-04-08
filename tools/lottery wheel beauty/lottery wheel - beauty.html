@@ -220,8 +220,30 @@
       }
     };
 
-    let lang = (document.documentElement.lang || 'en').toLowerCase();
-    if (lang === "zh-hant-tw" || lang === "zh-hk" || lang === "zh-hant") lang = "zh-tw";
+    function getQueryLang() {
+        const params = new URLSearchParams(window.location.search);
+        const queryLang = params.get('lang');
+        if (queryLang) {
+            return queryLang.toLowerCase();
+        }
+        // fallback to browser language
+        return (navigator.language || navigator.languages?.[0] || 'en').toLowerCase();
+    }
+
+    // 取得使用語言代碼
+    let rawLang = getQueryLang();
+
+    // 語言別名映射
+    const langAliasMap = {
+    'zh-hant': 'zh-tw',
+    'zh-hant-tw': 'zh-tw',
+    'zh-hk': 'zh-tw',
+    'zh-mo': 'zh-tw',
+    // 其他未來可擴充語言：例如 'zh-cn': 'zh-cn', 'ja': 'ja'
+    };
+
+    // 將 rawLang 轉換為我們支援的語言代碼
+    let lang = langAliasMap[rawLang] || 'en';
     const message = messages[lang] || messages['en'];
     const getMessage = key => typeof message[key] === 'function' ? message[key]() : message[key] || key;
 
