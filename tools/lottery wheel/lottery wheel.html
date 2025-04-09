@@ -224,6 +224,47 @@
     toggleBtn.textContent = getMessage('start');
     displayPrize.textContent = getMessage('ready');
 
+    // 記錄儲存設定，使用 localStorage ，僅儲存於本機的目前網站中
+    const STORAGE_KEY_SETTINGS = 'lottery_settings';
+    const STORAGE_KEY_HISTORY = 'lottery_history';
+  
+    function saveSettingsToLocalStorage() {
+      localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(prevSettings));
+    }
+  
+    function saveDrawHistoryToLocalStorage() {
+      const historyItems = Array.from(drawHistory.children).map(li => li.textContent);
+      localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(historyItems));
+    }
+  
+    function loadSettingsFromLocalStorage() {
+      const data = localStorage.getItem(STORAGE_KEY_SETTINGS);
+      if (data) {
+        try {
+          prevSettings = JSON.parse(data);
+          renderPrevSettings();
+        } catch (e) {
+          console.error('設定記錄讀取錯誤', e);
+        }
+      }
+    }
+  
+    function loadDrawHistoryFromLocalStorage() {
+      const data = localStorage.getItem(STORAGE_KEY_HISTORY);
+      if (data) {
+        try {
+          const items = JSON.parse(data);
+          drawHistory.innerHTML = '';
+          items.forEach(text => {
+            drawHistory.insertAdjacentHTML('beforeend', `<li>${text}</li>`);
+          });
+        } catch (e) {
+          console.error('抽籤記錄讀取錯誤', e);
+        }
+      }
+    }
+
+    // 抽籤環節
     let prizes = [];
     let interval = null;
     let spinTimeout = null;
@@ -265,6 +306,7 @@
         });
         prevList.appendChild(li);
       });
+      saveSettingsToLocalStorage(); // <-- 儲存設定記錄
     }
 
     toggleBtn.addEventListener('click', () => {
@@ -319,15 +361,24 @@
       prevList.style.pointerEvents = 'auto';
       drawing = false;
       drawHistory.insertAdjacentHTML('afterbegin', `<li>${displayPrize.textContent}</li>`);
+      saveDrawHistoryToLocalStorage(); // <-- 儲存抽籤記錄
     }
 
     clearDrawHistoryBtn.addEventListener('click', () => {
       drawHistory.innerHTML = '';
+      localStorage.removeItem(STORAGE_KEY_HISTORY); // <-- 清除 localStorage
     });
 
     clearSettingHistoryBtn.addEventListener('click', () => {
       prevSettings = [];
       renderPrevSettings(); // 重新渲染 UI
+      localStorage.removeItem(STORAGE_KEY_SETTINGS); // <-- 清除 localStorage
+    });
+
+    // 網頁載入時，讀取 localStorage
+    window.addEventListener('load', () => {
+      loadSettingsFromLocalStorage();
+      loadDrawHistoryFromLocalStorage();
     });
 
   </script>
