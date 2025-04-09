@@ -24,7 +24,7 @@
       max-width: 1200px;
     }
 
-    .history-container, .lottery-container, .settings-container {
+    .right-container, .center-container, .left-container {
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -47,10 +47,19 @@
       background-color: #f8f8f8;
     }
 
-    textarea {
+    #prizeInput {
       width: 100%;
       max-width: 500px;
-      height: 300px;
+      height: 250px;
+      resize: none;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    #countdownInput {
+      width: 100%;
+      max-width: 40px;
+      height: 35px;
       resize: none;
       font-size: 16px;
       text-align: center;
@@ -92,32 +101,84 @@
       margin-bottom: -3px; /* 減少間距 */
     }
 
-    .buttons-container {
+    .buttons-container .countdown-setting-container .left-container .right-container .top-right-container {
       display: flex;
       gap: 10px; /* 兩個按鈕之間的間距 */
       justify-content: center; /* 可選，讓按鈕居中 */
+      align-items: center; /* 垂直置中 */
+    }
+
+    .top-right-container {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      align-items: center; /* 垂直居中 */
+      gap: 10px; /* 設定選擇框和按鈕之間的間距 */
+    }
+
+    #languageSelect, #resetButton {
+      margin: 0; /* 移除預設的外邊距 */
+    }
+
+    #countdown-setting-container {
+      display: flex;
+      align-items: center; /* 使所有元素垂直置中 */
+      gap: 10px; /* 元素之間的間距 */
+    }
+
+    #countdown-text-before, #countdown-text-after {
+      margin: 0; /* 移除 p 元素的預設外邊距 */
+    }
+
+    h2 {
+      margin: 0;           /* 移除上下的外邊距 */
+      line-height: 1;      /* 設定行高為 1，減少行距 */
+      padding-top: 0.5em;   /* 給 h2 元素增加上方的內邊距 */
+    }
+    #resetBtn {
+      padding: 0.5px 0.5px; /* 設定小的內邊距 */
     }
   </style>
 </head>
 
 <body>
   <h1 id="lottery-title"></h1>
+
+  <!-- 右上角區塊 -->
+  <div class="top-right-container">
+    <select id="languageSelect" onchange="changeLanguage()">
+      <option value="zh-tw">繁體中文</option>
+      <option value="en">English</option>
+    </select>
+    <button id="resetBtn"></button>
+  </div>
+
   <div class="container">
-    <!-- 抽籤紀錄區塊 -->
-    <div class="history-container">
+    
+    <div class="right-container">
+      <!-- 設定轉盤停止區塊 -->
+      <h2 id="countdown-input-title"></h2>
+      <div id="countdown-setting-container">
+        <p id="countdown-text-pre"></p>
+        <input type="number" id="countdownInput" value="10" min="0">
+        <p id="countdown-text-post"></p>
+      </div>
+
+      <!-- 抽籤紀錄區塊 -->
       <h2 id="draw-history-title"></h2>
       <button id="clearDrawHistoryBtn"></button>
       <ul id="drawHistory"></ul>
     </div>
 
     <!-- 抽獎輪盤區塊 -->
-    <div class="lottery-container">
+    <div class="center-container">
       <div class="lottery-box" id="displayPrize"></div>
-      <button id="toggleBtn" disabled></button>
+      <button id="toggleBtn" disabled></button>      
     </div>
 
-    <!-- 設定獎品區塊 -->
-    <div class="settings-container">
+    <div class="left-container">
+      <!-- 設定獎品區塊 -->
       <h2 id="lottery-price"></h2>
       <textarea id="prizeInput" placeholder=""></textarea>
       <div class="buttons-container">
@@ -125,16 +186,15 @@
         <button id="clearPrizesBtn"></button>
       </div>
 
+      <!-- 設定記錄區塊 -->
       <h2 id="prev-settings-title"></h2>
       <div id="clickHint"></div>
-      <button id="clearSettingHistoryBtn"></button>
-      <ul id="prev-settings-list"></ul>
+        <button id="clearSettingHistoryBtn"></button>
+        <ul id="prev-settings-list"></ul>
+      </div>
     </div>
-  </div>
 
   <script>
-    const wheelTime = 10; // 轉盤轉動時間(秒)
-
     const messages = {
       "zh-tw": {
         title: "抽籤輪盤",
@@ -150,7 +210,16 @@
         clearSetting: "清空設定",
         clearDrawHistory: "清空抽籤記錄",
         clearSettingHistory: "清空設定記錄",
-        clickHint: "(點選以載入)"
+        clickHint: "(點選以載入)",
+        reset: "重置",
+        invalidCountdown: "無效的秒數，請設定為大於 0 的數！",
+        loadDrawHistoryError: "抽籤記錄讀取錯誤",
+        loadSettingsError: "設定記錄讀取錯誤",
+        loadCountdownError: "停止秒數讀取錯誤",
+        countdownInput: "停止時間",
+        countdownTextPre: "轉盤將在",
+        countdownTextPost: "秒後自動停止",
+        resetConfirmed: "是否確定要重置所有參數（設定、設定記錄、停止時間、抽籤記錄）？"
       },
       "en": {
         title: "Lottery Wheel",
@@ -166,18 +235,40 @@
         clearSetting: "Clear",
         clearDrawHistory: "Clear Draw History",
         clearSettingHistory: "Clear Setting History",
-        clickHint: "(Click to load)"
+        clickHint: "(Click to load)",
+        reset: "Reset",
+        invalidCountdown: "Invalid number of seconds, please set it to a number greater than 0!",
+        loadDrawHistoryError: "Load draw history error",
+        loadSettingsError: "Load settings error",
+        loadCountdownError: "Load countdown error",
+        countdownInput: "Stop Time",
+        countdownTextPre: "It will stop in",
+        countdownTextPost: "sec automatically",
+        resetConfirmed: "Are you sure you want to reset all parameters (settings, settings history, stop time, draw history)?"
       }
     };
 
+    // 讀取網址中的 lang 參數
     function getQueryLang() {
-        const params = new URLSearchParams(window.location.search);
-        const queryLang = params.get('lang');
-        if (queryLang) {
-            return queryLang.toLowerCase();
-        }
-        // fallback to browser language
-        return (navigator.language || navigator.languages?.[0] || 'en').toLowerCase();
+      const params = new URLSearchParams(window.location.search);
+      const queryLang = params.get('lang');
+      if (queryLang) {
+        return queryLang.toLowerCase();
+      }
+      // 如果網址中沒有 lang 參數，則回退到瀏覽器語言設定
+      return (navigator.language || navigator.languages?.[0] || 'en').toLowerCase();
+    }
+
+    // 根據語言選擇更新頁面內容
+    function changeLanguage() {
+      const lang = document.getElementById('languageSelect').value; // 獲取當前選擇的語言
+      const currentUrl = new URL(window.location.href);// 更新網址中的 lang 參數
+      currentUrl.searchParams.set('lang', lang);
+      window.history.pushState({}, '', currentUrl);
+      //window.location.reload(); // 刷新頁面
+      loadTranslation(lang);  // 只讀取翻譯
+      const message = messages[lang] || messages['en'];
+      const getMessage = key => typeof message[key] === 'function' ? message[key]() : message[key] || key;
     }
 
     // 取得使用語言代碼
@@ -185,14 +276,14 @@
 
     // 語言別名映射
     const langAliasMap = {
-        'zh-tw': 'zh-tw',
-        'zh': 'zh-tw',
-        'zh-hant': 'zh-tw',
-        'zh-hant-tw': 'zh-tw',
-        'zh-hk': 'zh-tw',
-        'zh-mo': 'zh-tw',
-        'en': 'en',
-        // 其他未來可擴充語言：例如 'zh-cn': 'zh-cn', 'ja': 'ja'
+      'zh-tw': 'zh-tw',
+      'zh': 'zh-tw',
+      'zh-hant': 'zh-tw',
+      'zh-hant-tw': 'zh-tw',
+      'zh-hk': 'zh-tw',
+      'zh-mo': 'zh-tw',
+      'en': 'en',
+      // 其他未來可擴充語言：例如 'zh-cn': 'zh-cn', 'ja': 'ja'
     };
 
     // 將 rawLang 轉換為我們支援的語言代碼
@@ -209,20 +300,31 @@
     const clearDrawHistoryBtn = document.getElementById('clearDrawHistoryBtn');
     const clearSettingHistoryBtn = document.getElementById('clearSettingHistoryBtn');
     const clearPrizesBtn = document.getElementById('clearPrizesBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    
+    function loadTranslation(lang) {
+      const message = messages[lang] || messages['en'];
+      const getMessage = key => typeof message[key] === 'function' ? message[key]() : message[key] || key;
 
-    document.getElementById('lottery-title').textContent = getMessage('title');
-    document.getElementById('lottery-price').textContent = getMessage('setting');
-    document.getElementById('prev-settings-title').textContent = getMessage('prevSettings');
-    document.getElementById('draw-history-title').textContent = getMessage('drawHistory');
-    document.title = getMessage('title');
-    document.getElementById('clearDrawHistoryBtn').textContent = getMessage('clearDrawHistory');
-    document.getElementById('clearSettingHistoryBtn').textContent = getMessage('clearSettingHistory');
-    document.getElementById('clickHint').textContent = getMessage('clickHint');
-    prizeInput.placeholder = getMessage('placeholder');
-    setPrizesBtn.textContent = getMessage('setPrizeBtn');
-    clearPrizesBtn.textContent = getMessage('clearSetting');
-    toggleBtn.textContent = getMessage('start');
-    displayPrize.textContent = getMessage('ready');
+      document.getElementById('lottery-title').textContent = getMessage('title');
+      document.getElementById('lottery-price').textContent = getMessage('setting');
+      document.getElementById('prev-settings-title').textContent = getMessage('prevSettings');
+      document.getElementById('draw-history-title').textContent = getMessage('drawHistory');
+      document.title = getMessage('title');
+      document.getElementById('clearDrawHistoryBtn').textContent = getMessage('clearDrawHistory');
+      document.getElementById('clearSettingHistoryBtn').textContent = getMessage('clearSettingHistory');
+      document.getElementById('clickHint').textContent = getMessage('clickHint');
+      document.getElementById('countdown-input-title').textContent = getMessage('countdownInput');
+      document.getElementById('countdown-text-pre').textContent = getMessage('countdownTextPre');
+      document.getElementById('countdown-text-post').textContent = getMessage('countdownTextPost');
+      document.getElementById('languageSelect').value = lang; // 更新語言選擇器並顯示對應的內容
+      prizeInput.placeholder = getMessage('placeholder');
+      setPrizesBtn.textContent = getMessage('setPrizeBtn');
+      clearPrizesBtn.textContent = getMessage('clearSetting');
+      toggleBtn.textContent = getMessage('start');
+      displayPrize.textContent = getMessage('ready');
+      resetBtn.textContent = getMessage('reset')
+    }
 
     // 記錄儲存設定，使用 localStorage ，僅儲存於本機的目前網站中
     const STORAGE_KEY_SETTINGS = 'lottery_settings';
@@ -244,7 +346,8 @@
           prevSettings = JSON.parse(data);
           renderPrevSettings();
         } catch (e) {
-          console.error('設定記錄讀取錯誤', e);
+          console.error(getMessage("loadSettingsError"), e);
+          localStorage.removeItem(STORAGE_KEY_SETTINGS);
         }
       }
     }
@@ -259,10 +362,32 @@
             drawHistory.insertAdjacentHTML('beforeend', `<li>${text}</li>`);
           });
         } catch (e) {
-          console.error('抽籤記錄讀取錯誤', e);
+          console.error(getMessage("loadDrawHistoryError"), e);
+          localStorage.removeItem(STORAGE_KEY_HISTORY);
         }
       }
     }
+
+    // 讀取轉盤停止時間
+    const countdownInput = document.getElementById('countdownInput');
+    const STORAGE_KEY_COUNTDOWN = 'lottery_countdown';
+    let wheelTime = 10; // 預設轉盤冷卻時間
+    
+    function loadCountdownFromLocalStorage() {  // 載入 localStorage 中的倒數設定
+      const data = localStorage.getItem(STORAGE_KEY_COUNTDOWN);
+      if (data) {
+        try {
+          if (!isNaN(data) && Number(data) >= 0) {
+            wheelTime = Number(data);
+            countdownInput.value = wheelTime;
+          }
+        } catch (e) {
+          console.error(getMessage("loadCountdownError"), e);
+          localStorage.removeItem(STORAGE_KEY_COUNTDOWN);
+        }
+      }
+    }
+
 
     // 抽籤環節
     let prizes = [];
@@ -309,14 +434,25 @@
       saveSettingsToLocalStorage(); // <-- 儲存設定記錄
     }
 
-    toggleBtn.addEventListener('click', () => {
-      if (!drawing) {
+    toggleBtn.addEventListener('click', () => {      
+      const val = countdownInput.value.trim(); // 驗證轉盤停止時間
+      const sec = Number(val);
+      if (isNaN(sec) || sec < 0) {
+        alert(getMessage('invalidCountdown'));
+        countdownInput.value = wheelTime; // 還原原本數值
+        return;
+      }
+      wheelTime = sec;
+      localStorage.setItem(STORAGE_KEY_COUNTDOWN, sec);
+      
+      if (!drawing) { // 旋轉
         if (prizes.length === 0) return;
         drawing = true;
         toggleBtn.textContent = getMessage('stop');
         setPrizesBtn.disabled = true;
         prizeInput.disabled = true;
         clearPrizesBtn.disabled = true;
+        countdownInput.disabled = true;
         prevList.style.pointerEvents = 'none';
 
         let duration = wheelTime * 1000; // 總轉動時間（毫秒）
@@ -358,6 +494,7 @@
       setPrizesBtn.disabled = false;
       prizeInput.disabled = false;
       clearPrizesBtn.disabled = false;
+      countdownInput.disabled = false;
       prevList.style.pointerEvents = 'auto';
       drawing = false;
       drawHistory.insertAdjacentHTML('afterbegin', `<li>${displayPrize.textContent}</li>`);
@@ -375,10 +512,32 @@
       localStorage.removeItem(STORAGE_KEY_SETTINGS); // <-- 清除 localStorage
     });
 
-    // 網頁載入時，讀取 localStorage
+    resetBtn.addEventListener('click', () => {
+      // 使用瀏覽器的 confirm 彈出框詢問
+      const confirmed = confirm(getMessage("resetConfirmed"));
+
+      if (confirmed) {
+        // 如果用戶選擇「確定」，執行重置操作
+        stopDraw();
+        prizeInput.value = '';
+        drawHistory.innerHTML = '';
+        prevSettings = [];
+        renderPrevSettings();
+        wheelTime = 10;
+        localStorage.removeItem(STORAGE_KEY_SETTINGS);
+        localStorage.removeItem(STORAGE_KEY_HISTORY);
+        localStorage.removeItem(STORAGE_KEY_COUNTDOWN);
+        toggleBtn.disabled = true;
+        window.location.reload(); // 刷新頁面
+      }
+    });
+
+    // 網頁載入時，讀取 localStorage 和讀取翻譯
     window.addEventListener('load', () => {
       loadSettingsFromLocalStorage();
       loadDrawHistoryFromLocalStorage();
+      loadCountdownFromLocalStorage();
+      loadTranslation(lang);
     });
 
   </script>
