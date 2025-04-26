@@ -39,18 +39,22 @@
 
 <script>
     // 遊戲開始
+    // 判斷是不是觸控裝置
+    var isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     // 手機版隱藏對話框
-    document.addEventListener('touchstart', function(event) {
-        var box = document.getElementById("messageBox");
-        if (box && box.style.visibility !== "hidden") {
-            box.style.visibility = "hidden";
-            event.preventDefault(); // 防止觸控上的奇怪行為
-        }
-    }, { passive: false }); // 這個很重要，讓 preventDefault 正常生效
+    if (isTouchDevice) {
+        document.addEventListener('touchstart', function(event) {
+            var box = document.getElementById("messageBox");
+            if (box && box.style.visibility !== "hidden") {
+                box.style.visibility = "hidden";
+                event.preventDefault(); // 防止觸控上的奇怪行為
+            }
+        }, { passive: false }); // 這個很重要，讓 preventDefault 正常生效
+    }
     // 電腦版隱藏對話框
     document.onkeydown = function(evt) {
         evt = evt || window.event;
-        if (evt.keyCode == 32) {
+        if (evt.keyCode == 32 || evt.keyCode == 38) { // 32: 空白鍵, 38: ↑方向鍵
             var box = document.getElementById("messageBox");
             box.style.visibility="hidden";
         }
