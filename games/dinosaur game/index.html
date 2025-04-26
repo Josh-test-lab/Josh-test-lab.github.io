@@ -47,13 +47,6 @@
             event.preventDefault(); // 防止觸控上的奇怪行為
         }
     }, { passive: false }); // 這個很重要，讓 preventDefault 正常生效
-
-    document.addEventListener('click', function(event) {
-        var box = document.getElementById("messageBox");
-        if (box && box.style.visibility !== "hidden") {
-            box.style.visibility = "hidden";
-        }
-    });
     // 電腦版隱藏對話框
     document.onkeydown = function(evt) {
         evt = evt || window.event;
