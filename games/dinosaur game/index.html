@@ -40,17 +40,18 @@
 <script>
     // 遊戲開始
     // 電腦版隱藏對話框
-    var box = document.getElementById("messageBox");
     document.onkeydown = function(evt) {
         evt = evt || window.event;
         if (evt.keyCode == 32) {
+            var box = document.getElementById("messageBox");
             box.style.visibility="hidden";
         }
     };
     // 手機版隱藏對話框
-    box.ontouchstart = function() {
+    document.addEventListener('touchstart', function() {
+        var box = document.getElementById("messageBox");
         box.style.visibility = "hidden";
-    };
+    });
 
     // 翻譯功能
     const translations = {
