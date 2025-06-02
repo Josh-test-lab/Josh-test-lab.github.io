@@ -91,26 +91,37 @@ colnames(coefficients_matrix) <- c("Intercept", "Slope")
 coefficients_matrix
 ```
 
-# visualizations
+# scatter plots
 ```{r}
-#png("anscombe_plot.png", width = 6, height = 6, units = "in", res = 300)
+#png("anscombe_scatterplot.png", width = 6, height = 6, units = "in", res = 300)
 par(mfrow = c(2, 2))
 
-plot(x1, y1, main = "Dataset 1", pch = 19)
+plot(x1, y1, main = "Dataset 1", pch = 19, xlim = c(4, 20), ylim = c(4, 15))
 abline(lm1, col = "red")
 
-plot(x2, y2, main = "Dataset 2", pch = 19)
+plot(x2, y2, main = "Dataset 2", pch = 19, xlim = c(4, 20), ylim = c(4, 15))
 abline(lm2, col = "red")
 
-plot(x3, y3, main = "Dataset 3", pch = 19)
+plot(x3, y3, main = "Dataset 3", pch = 19, xlim = c(4, 20), ylim = c(4, 15))
 abline(lm3, col = "red")
 
-plot(x4, y4, main = "Dataset 4", pch = 19)
+plot(x4, y4, main = "Dataset 4", pch = 19, xlim = c(4, 20), ylim = c(4, 15))
 abline(lm4, col = "red")
 
 #dev.off()
 ```
 
+# boxplots
+```{r}
+#png("anscombe_boxplot.png", width = 8, height = 6, units = "in", res = 300)
+
+boxplot(cbind(x, y),
+        main = "Boxplots of Anscombe's Quartet",
+        horizontal = TRUE
+)
+
+#dev.off()
+```
 
 
 
