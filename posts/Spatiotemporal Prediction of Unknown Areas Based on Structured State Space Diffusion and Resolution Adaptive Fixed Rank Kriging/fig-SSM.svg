@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 710 135" width="100%" height="100%">
+  <!-- 背景透明 -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#000000"/>
+    </marker>
+    <style>
+      .text { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 18px; fill: #000000; text-anchor: middle; dominant-baseline: central; }
+      .rect-block { fill: none; stroke: #000000; stroke-width: 1.5; rx: 5; ry: 5; }
+      .circle-block { fill: none; stroke: #000000; stroke-width: 1.5; }
+      .line { fill: none; stroke: #000000; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <!-- 訊號線與箭頭 -->
+  <!-- u(t) to B -->
+  <path d="M 50 65 L 110 65" class="line" marker-end="url(#arrow)"/>
+  <!-- B to + -->
+  <path d="M 145 65 L 200 65" class="line" marker-end="url(#arrow)"/>
+  <!-- + to x'(t) -->
+  <path d="M 230 65 L 255 65" class="line" marker-end="url(#arrow)"/>
+  <!-- x'(t) to Integral -->
+  <path d="M 315 65 L 340 65" class="line" marker-end="url(#arrow)"/>
+  <!-- Integral to x(t) -->
+  <path d="M 380 65 L 400 65" class="line" marker-end="url(#arrow)"/>
+  <!-- x(t) to C -->
+  <path d="M 460 65 L 485 65" class="line" marker-end="url(#arrow)"/>
+  <!-- C to + -->
+  <path d="M 520 65 L 575 65" class="line" marker-end="url(#arrow)"/>
+  <!-- + to y(t) -->
+  <path d="M 605 65 L 670 65" class="line" marker-end="url(#arrow)"/>
+  
+  <!-- 上方回授迴路 (A) -->
+  <path d="M 430 45 L 430 15 L 380 15" class="line" marker-end="url(#arrow)"/>
+  <path d="M 330 15 L 215 15 L 215 47" class="line" marker-end="url(#arrow)"/>
+  
+  <!-- 下方前饋迴路 (D) -->
+  <path d="M 25 80 L 25 120 L 330 120" class="line" marker-end="url(#arrow)"/>
+  <path d="M 380 120 L 590 120 L 590 83" class="line" marker-end="url(#arrow)"/>
+
+  <!-- 方塊與文字標籤 -->
+  <!-- u(t) -->
+  <text x="25" y="65" class="text">u(t)</text>
+  
+  <!-- B -->
+  <rect x="110" y="45" width="35" height="40" class="rect-block"/>
+  <text x="127.5" y="65" class="text" font-weight="bold">B</text>
+  
+  <!-- 第一個加號 circle -->
+  <circle cx="215" cy="65" r="15" class="circle-block"/>
+  <text x="215" y="65" class="text" font-style="normal" font-size="20">+</text>
+  
+  <!-- x'(t) -->
+  <rect x="255" y="45" width="60" height="40" class="rect-block"/>
+  <text x="285" y="65" class="text">x&apos;(t)</text>
+  
+  <!-- 積分器 ʃ -->
+  <rect x="340" y="35" width="40" height="60" class="rect-block"/>
+  <text x="360" y="65" class="text" font-size="28" font-style="normal">∫</text>
+  
+  <!-- x(t) -->
+  <rect x="400" y="45" width="60" height="40" class="rect-block"/>
+  <text x="430" y="65" class="text">x(t)</text>
+  
+  <!-- A -->
+  <rect x="330" y="0" width="50" height="30" class="rect-block"/>
+  <text x="355" y="15" class="text" font-weight="bold">A</text>
+  
+  <!-- C -->
+  <rect x="485" y="45" width="35" height="40" class="rect-block"/>
+  <text x="502.5" y="65" class="text" font-weight="bold">C</text>
+  
+  <!-- 第二個加號 circle -->
+  <circle cx="590" cy="65" r="15" class="circle-block"/>
+  <text x="590" y="65" class="text" font-style="normal" font-size="20">+</text>
+  
+  <!-- D -->
+  <rect x="330" y="105" width="50" height="30" class="rect-block"/>
+  <text x="355" y="120" class="text" font-weight="bold">D</text>
+  
+  <!-- y(t) -->
+  <text x="685" y="65" class="text">y(t)</text>
+</svg>
