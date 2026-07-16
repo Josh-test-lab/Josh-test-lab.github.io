@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_5c3297f6e726ebbc4bf76cc7602c4f13 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.css"/>
+</head>
+<body>
+    
+    
+    <div style="
+        position: fixed; 
+        bottom: 50px; left: 50px; width: 280px; 
+        border:2px solid grey; z-index:9999; font-size:14px;
+        background-color:white; padding: 10px;
+    ">
+        <b>深度 (圓心，公里)</b><br>
+        <div style="background: linear-gradient(to right, rgba(255,0,0,1) 0%, rgba(255,12,0,1) 1%, rgba(255,25,0,1) 2%, rgba(255,38,0,1) 3%, rgba(255,51,0,1) 4%, rgba(255,64,0,1) 5%, rgba(255,76,0,1) 6%, rgba(255,89,0,1) 7%, rgba(255,102,0,1) 8%, rgba(255,115,0,1) 9%, rgba(255,128,0,1) 10%, rgba(255,134,0,1) 11%, rgba(255,140,0,1) 12%, rgba(255,147,0,1) 13%, rgba(255,153,0,1) 14%, rgba(255,159,0,1) 15%, rgba(255,166,0,1) 16%, rgba(255,172,0,1) 17%, rgba(255,178,0,1) 18%, rgba(255,185,0,1) 19%, rgba(255,191,0,1) 20%, rgba(255,197,0,1) 21%, rgba(255,204,0,1) 22%, rgba(255,210,0,1) 23%, rgba(255,216,0,1) 24%, rgba(255,223,0,1) 25%, rgba(255,229,0,1) 26%, rgba(255,235,0,1) 27%, rgba(255,242,0,1) 28%, rgba(255,248,0,1) 29%, rgba(255,255,0,1) 30%, rgba(242,255,0,1) 31%, rgba(229,255,0,1) 32%, rgba(216,255,0,1) 33%, rgba(204,255,0,1) 34%, rgba(191,255,0,1) 35%, rgba(178,255,0,1) 36%, rgba(165,255,0,1) 37%, rgba(153,255,0,1) 38%, rgba(140,255,0,1) 39%, rgba(127,255,0,1) 40%, rgba(114,255,0,1) 41%, rgba(102,255,0,1) 42%, rgba(89,255,0,1) 43%, rgba(76,255,0,1) 44%, rgba(63,255,0,1) 45%, rgba(51,255,0,1) 46%, rgba(38,255,0,1) 47%, rgba(25,255,0,1) 48%, rgba(12,255,0,1) 49%, rgba(0,255,0,1) 50%, rgba(0,242,12,1) 51%, rgba(0,229,25,1) 52%, rgba(0,216,38,1) 53%, rgba(0,204,51,1) 54%, rgba(0,191,63,1) 55%, rgba(0,178,76,1) 56%, rgba(0,165,89,1) 57%, rgba(0,153,102,1) 58%, rgba(0,140,114,1) 59%, rgba(0,127,127,1) 60%, rgba(0,114,140,1) 61%, rgba(0,102,153,1) 62%, rgba(0,89,165,1) 63%, rgba(0,76,178,1) 64%, rgba(0,63,191,1) 65%, rgba(0,51,204,1) 66%, rgba(0,38,216,1) 67%, rgba(0,25,229,1) 68%, rgba(0,12,242,1) 69%, rgba(0,0,255,1) 70%, rgba(4,0,250,1) 71%, rgba(8,0,246,1) 72%, rgba(12,0,242,1) 73%, rgba(17,0,238,1) 74%, rgba(21,0,233,1) 75%, rgba(25,0,229,1) 76%, rgba(29,0,225,1) 77%, rgba(34,0,221,1) 78%, rgba(38,0,216,1) 79%, rgba(42,0,212,1) 80%, rgba(46,0,208,1) 81%, rgba(51,0,204,1) 82%, rgba(55,0,199,1) 83%, rgba(59,0,195,1) 84%, rgba(64,0,191,1) 85%, rgba(68,0,187,1) 86%, rgba(72,0,183,1) 87%, rgba(76,0,178,1) 88%, rgba(81,0,174,1) 89%, rgba(85,0,170,1) 90%, rgba(89,0,166,1) 91%, rgba(93,0,161,1) 92%, rgba(98,0,157,1) 93%, rgba(102,0,153,1) 94%, rgba(106,0,149,1) 95%, rgba(110,0,144,1) 96%, rgba(115,0,140,1) 97%, rgba(119,0,136,1) 98%, rgba(123,0,132,1) 99%, rgba(128,0,128,1) 100%); width: 240px; height: 18px; margin-top:6px;"></div>
+        <div style="width:240px; font-size:12px; margin-top:2px;">
+            <span style="float:left;">0 km</span>
+            <span style="float:right;">100 km+</span>
+        </div><br>
+
+        <b>震級 (邊框)</b><br>
+        <div style="display:flex; margin-top:5px;">
+            <div style="text-align:center; width:40px;">
+                <div style="background-color: rgba(0,0,255,1); width:40px; height:15px;"></div>
+                <span style="font-size:12px;">0-2</span>
+            </div>
+            <div style="text-align:center; width:40px;">
+                <div style="background-color: rgba(0,255,255,1); width:40px; height:15px;"></div>
+                <span style="font-size:12px;">2-4</span>
+            </div>
+            <div style="text-align:center; width:40px;">
+                <div style="background-color: rgba(0,255,0,1); width:40px; height:15px;"></div>
+                <span style="font-size:12px;">4-5</span>
+            </div>
+            <div style="text-align:center; width:40px;">
+                <div style="background-color: rgba(255,255,0,1); width:40px; height:15px;"></div>
+                <span style="font-size:12px;">5-6</span>
+            </div>
+            <div style="text-align:center; width:40px;">
+                <div style="background-color: rgba(255,128,0,1); width:40px; height:15px;"></div>
+                <span style="font-size:12px;">6-7</span>
+            </div>
+            <div style="text-align:center; width:40px;">
+                <div style="background-color: rgba(255,0,0,1); width:40px; height:15px;"></div>
+                <span style="font-size:12px;">7+</span>
+            </div>
+        </div>
+    </div>
+    
+    
+    <style>
+    #eqSidebar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 320px;
+        height: 100vh;
+        background: white;
+        border-left: 2px solid #aaa;
+        box-shadow: -3px 0 8px rgba(0,0,0,0.3);
+        transform: translateX(0);
+        transition: transform 0.3s;
+        z-index: 9999;
+        font-family: Arial, sans-serif;
+    }
+    #eqSidebar.collapsed {
+        transform: translateX(280px);
+    }
+    #eqSidebarHeader {
+        background: #f0f0f0;
+        padding: 12px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        border-bottom: 1px solid #ccc;
+        position: relative;
+    }
+    #eqSidebarToggle {
+        position: absolute;
+        right: 10px;
+    }
+    #eqSidebarContent {
+        padding: 12px;
+        overflow-y: auto;
+        height: calc(100vh - 55px);
+    }
+    .eqItem {
+        border-bottom: 1px solid #ddd;
+        padding: 8px 0;
+    }
+    .eqTime {
+        font-weight: bold;
+    }
+    .eqInfo {
+        font-size: 13px;
+        color: #444;
+        margin-top: 2px;
+    }
+    </style>
+
+    <div id="eqSidebar">
+        <div id="eqSidebarHeader" onclick="toggleSidebar()">
+            今日地震列表（依時間）
+            <span id="eqSidebarToggle">⯇</span>
+        </div>
+        <div id="eqSidebarContent"></div>
+    </div>
+
+    <script>
+    const earthquakes = [{'time': '2025-01-01T02:52:08+08:00', 'lat': 24.303, 'lon': 121.71, 'depth': 26.6, 'mag': 4.6, 'location': '', 'popup': '發生時間: 2025-01-01 02:52:08+08:00<br>座標位置: 經度 121.71, 緯度 24.303<br>震央深度: 26.6 km<br>芮氏規模: 4.6<br>觀測站數: 99'}, {'time': '2025-01-01T05:15:53+08:00', 'lat': 24.301, 'lon': 121.729, 'depth': 26.9, 'mag': 3.1, 'location': '', 'popup': '發生時間: 2025-01-01 05:15:53+08:00<br>座標位置: 經度 121.729, 緯度 24.301<br>震央深度: 26.9 km<br>芮氏規模: 3.1<br>觀測站數: 99'}];
+
+    function toggleSidebar() {
+        const sb = document.getElementById("eqSidebar");
+        const tg = document.getElementById("eqSidebarToggle");
+        sb.classList.toggle("collapsed");
+        tg.textContent = sb.classList.contains("collapsed") ? "⯈" : "⯇";
+    }
+
+    function updateSidebarByTime() {
+        // 取得 TimestampedGeoJson 的當前播放時間
+        let tgLayer;
+        for (const key in window) {
+            if (window[key] && window[key]._timeDimension) {
+                tgLayer = window[key];
+                break;
+            }
+        }
+        if (!tgLayer) return;
+
+        const curTimeMs = tgLayer._timeDimension.getCurrentTime();
+        const curDate = new Date(curTimeMs);
+
+        // 篩選今天且早於或等於當前時間的地震
+        const list = earthquakes.filter(eq => {
+            const t = new Date(eq.time);
+            return t.getFullYear() === curDate.getFullYear() &&
+                   t.getMonth() === curDate.getMonth() &&
+                   t.getDate() === curDate.getDate() &&
+                   t <= curDate;
+        }).sort((a,b)=> new Date(b.time) - new Date(a.time));
+
+        const panel = document.getElementById("eqSidebarContent");
+        panel.innerHTML = "";
+
+        if (list.length === 0) {
+            panel.innerHTML = "<div>此時間點前無地震事件</div>";
+            return;
+        }
+
+        list.forEach(eq => {
+            const t = new Date(eq.time);
+            const timeStr = t.toLocaleTimeString("zh-TW", {hour12:false});
+            panel.innerHTML += `
+                <div class="eqItem">
+                    <div class="eqTime">${timeStr}</div>
+                    <div class="eqInfo">
+                        ${eq.popup}
+                    </div>
+                </div>`;
+        });
+    }
+
+    setInterval(updateSidebarByTime, 500);
+    </script>
+    
+    
+            <div class="folium-map" id="map_5c3297f6e726ebbc4bf76cc7602c4f13" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_5c3297f6e726ebbc4bf76cc7602c4f13 = L.map(
+                "map_5c3297f6e726ebbc4bf76cc7602c4f13",
+                {
+                    center: [23.7, 121.0],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 8,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_c009b7a9ed1a5e05f558b329bdeb454c = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_c009b7a9ed1a5e05f558b329bdeb454c.addTo(map_5c3297f6e726ebbc4bf76cc7602c4f13);
+        
+    
+            L.Control.TimeDimensionCustom = L.Control.TimeDimension.extend({
+                _getDisplayDateFormat: function(date){
+                    var newdate = new moment(date);
+                    console.log(newdate)
+                    return newdate.format("YYYY-MM-DD");
+                }
+            });
+            map_5c3297f6e726ebbc4bf76cc7602c4f13.timeDimension = L.timeDimension(
+                {
+                    period: "P1D",
+                }
+            );
+            var timeDimensionControl = new L.Control.TimeDimensionCustom(
+                {
+  "position": "bottomleft",
+  "minSpeed": 0.1,
+  "maxSpeed": 20,
+  "autoPlay": true,
+  "loopButton": true,
+  "timeSliderDragUpdate": true,
+  "speedSlider": true,
+  "playerOptions": {
+  "transitionTime": 200,
+  "loop": false,
+  "startOver": true,
+},
+}
+            );
+            map_5c3297f6e726ebbc4bf76cc7602c4f13.addControl(this.timeDimensionControl);
+
+            var geoJsonLayer = L.geoJson({"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [121.71, 24.303]}, "properties": {"times": [1735660800000], "style": {"color": "rgba(0,255,0,0.5)", "fillColor": "rgba(255,233,0,1)", "radius": 9.849155306759329, "weight": 2}, "icon": "circle", "popup": "\u767c\u751f\u6642\u9593: 2025-01-01 02:52:08+08:00<br>\u5ea7\u6a19\u4f4d\u7f6e: \u7d93\u5ea6 121.71, \u7def\u5ea6 24.303<br>\u9707\u592e\u6df1\u5ea6: 26.6 km<br>\u82ae\u6c0f\u898f\u6a21: 4.6<br>\u89c0\u6e2c\u7ad9\u6578: 99"}}, {"type": "Feature", "geometry": {"type": "Point", "coordinates": [121.729, 24.301]}, "properties": {"times": [1735660800000], "style": {"color": "rgba(0,255,255,0.5)", "fillColor": "rgba(255,235,0,1)", "radius": 5.856342783782502, "weight": 2}, "icon": "circle", "popup": "\u767c\u751f\u6642\u9593: 2025-01-01 05:15:53+08:00<br>\u5ea7\u6a19\u4f4d\u7f6e: \u7d93\u5ea6 121.729, \u7def\u5ea6 24.301<br>\u9707\u592e\u6df1\u5ea6: 26.9 km<br>\u82ae\u6c0f\u898f\u6a21: 3.1<br>\u89c0\u6e2c\u7ad9\u6578: 99"}}]}, {
+                    pointToLayer: function (feature, latLng) {
+                        if (feature.properties.icon == 'marker') {
+                            if(feature.properties.iconstyle){
+                                return new L.Marker(latLng, {
+                                    icon: L.icon(feature.properties.iconstyle)});
+                            }
+                            //else
+                            return new L.Marker(latLng);
+                        }
+                        if (feature.properties.icon == 'circle') {
+                            if (feature.properties.iconstyle) {
+                                return new L.circleMarker(latLng, feature.properties.iconstyle)
+                                };
+                            //else
+                            return new L.circleMarker(latLng);
+                        }
+                        //else
+
+                        return new L.Marker(latLng);
+                    },
+                    style: function (feature) {
+                        return feature.properties.style;
+                    },
+                    onEachFeature: function(feature, layer) {
+                        if (feature.properties.popup) {
+                        layer.bindPopup(feature.properties.popup);
+                        }
+                        if (feature.properties.tooltip) {
+                        layer.bindTooltip(feature.properties.tooltip);
+                        }
+                    }
+                })
+
+            var timestamped_geo_json_1eac0ea8b61a3a64b8145e389f494f73 = L.timeDimension.layer.geoJson(
+                geoJsonLayer,
+                {
+                    updateTimeDimension: true,
+                    addlastPoint: true,
+                    duration: "P1D",
+                }
+            ).addTo(map_5c3297f6e726ebbc4bf76cc7602c4f13);
+        
+</script>
+</html>
